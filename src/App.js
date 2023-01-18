@@ -5,6 +5,8 @@ const apiRouter = require("./routes");
 
 require("dotenv").config();
 const app = express();
+
+mongoose.set('strictQuery', true);
 mongoose
   .connect(
     `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}${process.env.MONGODB_CLUSTER}`

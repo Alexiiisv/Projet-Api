@@ -28,7 +28,7 @@ const userSchema = mongoose.Schema(
       maxLength: 30,
       minLength: 3,
     },
-    City: {
+    city: {
       type: String,
       required: true,
       lowercase: true,

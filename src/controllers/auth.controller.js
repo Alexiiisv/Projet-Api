@@ -4,12 +4,15 @@ var jwt = require("jsonwebtoken");
 const saltRounds = 10;
 
 exports.register = (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, address, city, zipCode, phone, email, password } = req.body;
   var passwordHash = bcrypt.hashSync(password, saltRounds);
-  // console.log(passwordHash);
   const newUser = new User({
     firstName,
     lastName,
+    address,
+    city,
+    zipCode,
+    phone,
     email,
     password: passwordHash,
   });
