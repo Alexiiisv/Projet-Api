@@ -28,7 +28,6 @@ const missionSchema = mongoose.Schema(
     hardSkill: [{ type: mongoose.Schema.Types.ObjectId, ref: "HardSkill" }],
     status: {
       type: String,
-      required: true,
       lowercase: true,
     },
   },
