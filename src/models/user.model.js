@@ -65,6 +65,16 @@ const userSchema = mongoose.Schema(
       required: true,
       default: false,
     },
+    isFreelance: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Freelance",
+      default: null,
+    },
+    isBusiness: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Business",
+      default: null,
+    },
   },
   {
     timestamps: true,

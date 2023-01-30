@@ -1,13 +1,12 @@
 const Business = require("../models/business.model");
 
 exports.create = (req, res) => {
-  const { headQuarter, numberSiret, businessStatute, socialReason } =
-    req.body;
+  const { headQuarter, numberSiret, businessStatute, socialReason } = req.body;
   const newBusiness = new Business({
     headQuarter,
     numberSiret,
     businessStatute,
-    socialReason
+    socialReason,
   });
   newBusiness
     .save()

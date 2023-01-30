@@ -11,10 +11,10 @@ router.get("/deleteUserById/:id", userController.deleteUserById);
 
 router.put("/updateUserById/:id", userController.updateUserById);
 
-router.get(
-  "/getAllUser",
-  verifyToken,
-  userController.getAllUser
-);
+router.get("/getAllUser", verifyToken, userController.getAllUser);
+
+router.post("/setFreelance", verifyToken, userController.setFreelance);
+
+router.post("/setBusiness", verifyToken, userController.setBusiness);
 
 module.exports = router;

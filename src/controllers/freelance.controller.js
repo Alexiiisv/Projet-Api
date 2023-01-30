@@ -4,7 +4,7 @@ exports.create = (req, res) => {
   const { experience, dailyPrice } = req.body;
   const newFreelance = new Freelance({
     experience,
-    dailyPrice
+    dailyPrice,
   });
   newFreelance
     .save()
@@ -14,4 +14,16 @@ exports.create = (req, res) => {
     .catch((err) => {
       res.status(400).send(err);
     });
+};
+
+exports.getAllFreelance = (_, res) => {
+  Freelance.find().then((freelance) => {
+    if (!freelance) {
+      return res.status(404).send({
+        message: "no freelance found",
+      });
+    } else {
+      res.send(freelance);
+    }
+  });
 };

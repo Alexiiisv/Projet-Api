@@ -1,7 +1,7 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
-const main = require("../config/mail");
+const Email = require("../config/mail");
 const saltRounds = 10;
 
 exports.register = (req, res) => {
@@ -28,15 +28,21 @@ exports.register = (req, res) => {
   });
   newUser
     .save()
-    .then((data) => {
-      let sender = `"${firstName.concat(" ", lastName)}" <${email}>`;
-      let receiver = "admin@projapi.com";
-      let content = `${firstName.concat(
+    .then(async (data) => {
+      let user = `"${firstName.concat(" ", lastName)}" <${email}>`;
+      let admin = "admin@projapi.com";
+      let adminContent = `${firstName.concat(
         " ",
         lastName
       )} vient de se créer un compte.`;
+      let userContent = `Bonjour ${firstName.concat(" ", lastName)},
+      
+      Votre compte vient d'être créer, bonne journée.`;
       let subject = "création de compte";
-      main(sender, receiver, content, subject);
+      console.log("\nEmail Admin");
+      await Email(user, admin, adminContent, subject);
+      console.log("\nEmail User");
+      await Email(admin, user, userContent, subject);
       res.send({ msg: "Compte créer", user: data });
     })
     .catch((err) => {
