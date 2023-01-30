@@ -1,10 +1,20 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
+const main = require("../config/mail");
 const saltRounds = 10;
 
 exports.register = (req, res) => {
-  const { firstName, lastName, address, city, zipCode, phone, email, password } = req.body;
+  const {
+    firstName,
+    lastName,
+    address,
+    city,
+    zipCode,
+    phone,
+    email,
+    password,
+  } = req.body;
   var passwordHash = bcrypt.hashSync(password, saltRounds);
   const newUser = new User({
     firstName,
@@ -19,7 +29,15 @@ exports.register = (req, res) => {
   newUser
     .save()
     .then((data) => {
-      res.send(data);
+      let sender = `"${firstName.concat(" ", lastName)}" <${email}>`;
+      let receiver = "admin@projapi.com";
+      let content = `${firstName.concat(
+        " ",
+        lastName
+      )} vient de se créer un compte.`;
+      let subject = "création de compte";
+      main(sender, receiver, content, subject);
+      res.send({ msg: "Compte créer", user: data });
     })
     .catch((err) => {
       res.status(400).send(err);
