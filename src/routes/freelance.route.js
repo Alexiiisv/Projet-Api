@@ -5,5 +5,7 @@ const verifyToken = require("../middlewares/verifyToken");
 
 router.post("/create", verifyToken, freelanceController.create);
 
+router.get("/getAllFreelance", verifyToken, freelanceController.getAllFreelance);
+
 
 module.exports = router;

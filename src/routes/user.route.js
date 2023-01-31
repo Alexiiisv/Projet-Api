@@ -7,9 +7,9 @@ router.get("/getUserById/:id", verifyToken, userController.getUserById);
 
 router.get("/getUserInfo", verifyToken, userController.getUserInfo);
 
-router.get("/deleteUserById/:id", userController.deleteUserById);
+router.get("/deleteUserById/:id", verifyToken, userController.deleteUserById);
 
-router.put("/updateUserById/:id", userController.updateUserById);
+router.put("/updateUserById/:id", verifyToken, userController.updateUserById);
 
 router.get("/getAllUser", verifyToken, userController.getAllUser);
 

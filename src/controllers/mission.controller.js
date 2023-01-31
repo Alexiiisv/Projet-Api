@@ -1,10 +1,9 @@
 const Mission = require("../models/mission.model");
 
 exports.create = (req, res) => {
-  const startDate = Date.now(); //quand j'arriverai a faire la date sur postman je le changerai :)
-  const endDate = Date.now(); //quand j'arriverai a faire la date sur postman je le changerai :)
-  const { totalPrice, description, title } =
+  const { totalPrice, description, title, startDate, endDate } =
     req.body;
+    console.log(endDate);
   const newMission = new Mission({
     startDate,
     endDate,
@@ -32,6 +31,28 @@ exports.addhardSkillToMission = (req, res) => {
     }
     if (!mission.hardSkill.includes(hardSkillID)) {
       mission.hardSkill.push(hardSkillID);
+    } else {
+      return res.status(409).send({
+        message: "This hardSkill already exist for this mission",
+      });
+    }
+    mission.save();
+    res.send({
+      mission: mission,
+    });
+  });
+};
+
+exports.addJobToMission = (req, res) => {
+  const { missionID, jobID } = req.body;
+  Mission.findById(missionID).then((mission) => {
+    if (!mission) {
+      return res.status(404).send({
+        message: "no mission found",
+      });
+    }
+    if (!mission.job.includes(jobID)) {
+      mission.job.push(jobID);
     } else {
       return res.status(409).send({
         message: "This hardSkill already exist for this mission",

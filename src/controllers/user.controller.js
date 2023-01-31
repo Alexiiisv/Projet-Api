@@ -77,6 +77,12 @@ exports.getAllUser = (_, res) => {
 
 exports.setFreelance = (req, res) => {
   const { freelanceID, userID } = req.body;
+  if (freelanceID == "" || userID == "") {
+      return res.status(404).send({
+        message:
+          "Un champ est manquant",
+      });
+    }
   User.findByIdAndUpdate(userID, { isFreelance: freelanceID }).then((user) => {
     if (!user) {
       return res.status(404).send({
@@ -102,6 +108,12 @@ exports.setFreelance = (req, res) => {
 
 exports.setBusiness = (req, res) => {
   const { businessID, userID } = req.body;
+  if (businessID == "" || userID == "") {
+      return res.status(404).send({
+        message:
+          "Un champ est manquant",
+      });
+    }
   User.findByIdAndUpdate(userID, { isBusiness: businessID }).then((user) => {
     if (!user) {
       return res.status(404).send({

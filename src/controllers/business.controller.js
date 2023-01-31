@@ -17,3 +17,16 @@ exports.create = (req, res) => {
       res.status(400).send(err);
     });
 };
+
+exports.getAllBusiness = (_, res) => {
+  Business.find().then((business) => {
+    if (!business) {
+      return res.status(404).send({
+        message: "no business found",
+      });
+    } else {
+      res.send(business);
+    }
+  });
+};
+
