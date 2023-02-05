@@ -1,4 +1,8 @@
 const Mission = require("../models/mission.model");
+// const Freelance = require("../models/freelance.model");
+const User = require("../models/user.model");
+const Assoc_Business_Mission = require("../models/assoc_business_mission.model");
+const Assoc_Freelance_Mission = require("../models/assoc_Freelance_Mission.model");
 
 exports.create = (req, res) => {
   const { totalPrice, description, title, startDate, endDate } =
@@ -63,4 +67,49 @@ exports.addJobToMission = (req, res) => {
       mission: mission,
     });
   });
+};
+
+exports.proposeToFreelance = (req, res) => {
+  const { missionID, freelanceID } = req.body;
+  Mission.findById(missionID).then((mission) => {
+    console.log(mission);
+    if(!mission) {
+      return res.status(404).send({
+        message: "no mission found",
+      });
+    }
+    User.findById(req.userToken.id).then((business) => {
+      console.log(business);
+      if(!business) {
+        return res.status(404).send({
+          message: "no business found",
+        });
+      }
+      User.findById(freelanceID).then((freelance) => {
+        console.log(freelance);
+        if(!freelance) {
+          return res.status(404).send({
+            message: "no freelance found",
+          });
+        }
+      })
+    })
+    
+    const newAssoc_Business_Mission = Assoc_Business_Mission({
+      businessID: req.userToken.id,
+      missionID,
+      status: 'waiting'
+    })
+    newAssoc_Business_Mission.save();
+    const newAssoc_Freelance_Mission = Assoc_Freelance_Mission({
+      freelanceID,
+      missionID,
+      status: 'waiting'
+    })
+    newAssoc_Freelance_Mission.save();
+    mission.save();
+    res.send({
+      mission: mission,
+    });
+  })
 };

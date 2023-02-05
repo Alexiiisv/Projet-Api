@@ -7,6 +7,7 @@ const verifyBusiness = require("../middlewares/verifyBusiness");
 router.post("/create", [verifyToken, verifyBusiness], missionController.create);
 router.post("/addhardSkillToMission", verifyToken, missionController.addhardSkillToMission);
 router.post("/addJobToMission", verifyToken, missionController.addJobToMission);
+router.post("/proposeToFreelance", [verifyToken, verifyBusiness], missionController.proposeToFreelance);
 
 // router.post("/register", authController.register);
 
