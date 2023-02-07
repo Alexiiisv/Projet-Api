@@ -24,7 +24,6 @@ async function Email(
     text: content, // plain text body
   });
 
-  //   console.log("Message ID: %s", info.messageId);
   console.log("Email: %s", nodemailer.getTestMessageUrl(info));
 }
 

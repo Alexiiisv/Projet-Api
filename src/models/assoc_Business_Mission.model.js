@@ -2,9 +2,8 @@ const mongoose = require("mongoose");
 
 const assoc_Business_MissionSchema = mongoose.Schema(
   {
-    businessID: [{ type: mongoose.Schema.Types.ObjectId, ref: "business" }],
-    missionID: [{ type: mongoose.Schema.Types.ObjectId, ref: "mission" }],
-    status: [{ type: mongoose.Schema.Types.String}],
+    businessID: { type: mongoose.Schema.Types.ObjectId, ref: "business" },
+    missionID: { type: mongoose.Schema.Types.ObjectId, ref: "mission" },
   },
   {
     timestamps: true,

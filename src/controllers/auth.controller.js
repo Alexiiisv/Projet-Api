@@ -65,6 +65,7 @@ exports.login = (req, res) => {
             id: user.id,
             isAdmin: user.isAdmin,
             isBusiness: user.isBusiness,
+            isFreelance: user.isFreelance,
           },
           process.env.PRIVATE_KEY
         );

@@ -68,54 +68,78 @@ exports.addJobToMission = (req, res) => {
   });
 };
 
-exports.proposeToFreelance = (req, res) => {
+exports.proposeToFreelance = async (req, res) => {
   const { missionID, freelanceID } = req.body;
+  var body = {
+    message: "Réussite de la proposition pour un freelance"
+  };
+  var returnID = 200;
 
   //#region check que les valeurs existe
-  Mission.findById(missionID).then((mission) => {
+  await Mission.findById(missionID).then((mission) => {
     if(!mission) {
-      return res.status(404).send({
+      body = {
         message: "no mission found",
-      });
+      };
+      returnID = 404;
     }
   })
-  User.findById(req.userToken.id).then((business) => {
+  await User.findById(req.userToken.id).then((business) => {
     if(!business) {
-      return res.status(404).send({
+      body = {
         message: "no business found",
-      });
+      };
+      returnID = 404;
     }
   })
-  User.findById(freelanceID).then((freelance) => {
+  await User.findById(freelanceID).then((freelance) => {
     if(!freelance) {
-      return res.status(404).send({
+      body = {
         message: "no freelance found",
-      });
+      };
+      returnID = 404;
+    } else {
+      if(!freelance.isFreelance) {
+        body = {
+          message: "Cet utilisateur n'est pas un freelance.",
+        };
+      }
     }
-    if(!freelance.isFreelance) {
-      return res.status(404).send({
-        message: "Cet utilisateur n'est pas un freelance.",
-      });
-    }
+    
   })
+  //TO FIXE
+  await Assoc_Freelance_Mission.find({freelanceID: freelanceID, missionID: missionID}).then((assoc) => {
+    // console.log(typeof [], typeof assoc)
+    console.log(assoc)
+    console.log(assoc == [])
+    if (assoc != []) {
+      console.log("ntm")
+      body = {
+        message: "Cet utilisateur à déjà accepté cette mission.",
+      };
+      returnID = 201;
+    }
+   
+  });
   //#endregion
 
   //#region insert dans les associations les ID
-  const newAssoc_Business_Mission = Assoc_Business_Mission({
-    businessID: req.userToken.id,
-    missionID,
-    status: 'waiting'
-  })
-  const newAssoc_Freelance_Mission = Assoc_Freelance_Mission({
-    freelanceID,
-    missionID,
-    status: 'waiting'
-  })
-  newAssoc_Business_Mission.save();
-  newAssoc_Freelance_Mission.save();
+  if(missionID == 200) {
+    const newAssoc_Business_Mission = Assoc_Business_Mission({
+      businessID: req.userToken.id,
+      missionID
+    })
+    const newAssoc_Freelance_Mission = Assoc_Freelance_Mission({
+      freelanceID,
+      missionID,
+      status: 'Waiting'
+    })
+    newAssoc_Business_Mission.save();
+    newAssoc_Freelance_Mission.save();
+  }
+  
   //#endregion
 
-  res.send({
-    message: "Réussite de la proposition pour un freelance"
-  });
+  return res.status(returnID).send(body);
 };
+

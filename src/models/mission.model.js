@@ -30,6 +30,7 @@ const missionSchema = mongoose.Schema(
       type: String,
       lowercase: true,
     },
+    freelances: [{ type: mongoose.Schema.Types.ObjectId, ref: "User"}],
   },
   {
     timestamps: true,
