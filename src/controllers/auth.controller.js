@@ -55,7 +55,7 @@ exports.login = (req, res) => {
   User.findOne({
     email: email,
   }).then((user) => {
-    if (!user) return res.status(400).json({ msg: "User not exist" });
+    if (!user) return res.status(400).json({ msg: "L\'utilisateur n'existe pas" });
 
     bcrypt.compare(password, user.password, (err, data) => {
       if (err) throw err;
@@ -71,9 +71,9 @@ exports.login = (req, res) => {
         );
         return res
           .status(200)
-          .json({ msg: "Login success", userId: user.id, token: token });
+          .json({ msg: "Réussite de la connexion du compte", userId: user.id, token: token });
       } else {
-        return res.status(401).json({ msg: "Invalid credencial" });
+        return res.status(401).json({ msg: "Identifiant invalide" });
       }
     });
   });

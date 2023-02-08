@@ -11,7 +11,7 @@ function verifyToken(req, res, next) {
       return res.status(401).send({
         auth: false,
         token: null,
-        message: "not authorized",
+        message: "Pas autorisé.",
       });
     }
     req.userToken = jwtDecoded;

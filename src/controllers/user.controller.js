@@ -15,7 +15,7 @@ exports.getUserById = (req, res) => {
     .then((user) => {
       if (!user) {
         return res.status(404).send({
-          message: "no user found",
+          message: "Aucun utilisateur trouvé",
         });
       }
       res.send({
@@ -28,7 +28,7 @@ exports.getUserInfo = (req, res) => {
   User.findById(req.userToken.id).then((user) => {
     if (!user) {
       return res.status(404).send({
-        message: "no user found",
+        message: "Aucun utilisateur trouvé",
       });
     }
     res.send({
@@ -41,7 +41,7 @@ exports.deleteUserById = (req, res) => {
   User.findByIdAndRemove(req.params.id).then((user) => {
     if (!user) {
       return res.status(404).send({
-        message: "no user found",
+        message: "Aucun utilisateur trouvé",
       });
     }
     res.send(user);
@@ -60,7 +60,7 @@ exports.updateUserById = (req, res) => {
   }).then((user) => {
     if (!user) {
       return res.status(404).send({
-        message: "no user found",
+        message: "Aucun utilisateur trouvé",
       });
     }
     res.send(user);
@@ -71,7 +71,7 @@ exports.getAllUser = (_, res) => {
   User.find().then((user) => {
     if (!user) {
       return res.status(404).send({
-        message: "no user found",
+        message: "Aucun utilisateur trouvé",
       });
     } else {
       res.send(user);
@@ -172,7 +172,7 @@ exports.acceptMission = async (req, res) => {
   await Assoc_Freelance_Mission.findOneAndUpdate({missionID: missionID}, {status: "Accepted"}).then(async (assoc) => {
     if (!assoc) {
       return res.status(404).send({
-        message: "no mission found"
+        message: "Aucune mission trouvée"
       });
     }
     if (assoc.status == "Accepted") {
@@ -208,7 +208,7 @@ exports.acceptMission = async (req, res) => {
     })
   })
   res.send({
-    message: 'test'
+    message: 'L\'utilisateur vient d\'accepter la mission'
   })
 }
 
@@ -216,7 +216,7 @@ exports.declineMission = async (req, res) => {
   await Assoc_Freelance_Mission.findOneAndUpdate({missionID: req.body.MissionID}, {status: "Declined"}).then(async (assoc) => {
     if (!assoc) {
       return res.status(404).send({
-        message: "no mission found"
+        message: "aucune mission trouvée"
       });
     }
     if (assoc.status == "Declined") {

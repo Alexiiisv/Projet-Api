@@ -22,7 +22,7 @@ exports.getAllBusiness = (_, res) => {
   Business.find().then((business) => {
     if (!business) {
       return res.status(404).send({
-        message: "no business found",
+        message: "Aucune entreprise trouvée",
       });
     } else {
       res.send(business);

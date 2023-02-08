@@ -29,14 +29,14 @@ exports.addhardSkillToMission = (req, res) => {
   Mission.findById(missionID).then((mission) => {
     if (!mission) {
       return res.status(404).send({
-        message: "no mission found",
+        message: "Aucune mission trouvée",
       });
     }
     if (!mission.hardSkill.includes(hardSkillID)) {
       mission.hardSkill.push(hardSkillID);
     } else {
       return res.status(409).send({
-        message: "This hardSkill already exist for this mission",
+        message: "Cette comprétence est déjà reliée à cette mission",
       });
     }
     mission.save();
@@ -51,14 +51,14 @@ exports.addJobToMission = (req, res) => {
   Mission.findById(missionID).then((mission) => {
     if (!mission) {
       return res.status(404).send({
-        message: "no mission found",
+        message: "Aucune mission trouvée",
       });
     }
     if (!mission.job.includes(jobID)) {
       mission.job.push(jobID);
     } else {
       return res.status(409).send({
-        message: "This hardSkill already exist for this mission",
+        message: "Ce métier est déjà relié à cette mission",
       });
     }
     mission.save();
@@ -75,21 +75,21 @@ exports.proposeToFreelance = async (req, res) => {
   await Mission.findById(missionID).then((mission) => {
     if(!mission) {
       return res.status(404).send({
-        message: "no mission found",
+        message: "Aucune mission trouvée",
       });
     }
   })
   await User.findById(req.userToken.id).then((business) => {
     if(!business) {
       return res.status(404).send({
-        message: "no business found",
+        message: "Aucune entreprise trouvée",
       });
     }
   })
   await User.findById(freelanceID).then((freelance) => {
     if(!freelance) {
       return res.status(404).send({
-        message: "no freelance found",
+        message: "Aucun freelance trouvé",
       });
     } else {
       if(!freelance.isFreelance) {

@@ -20,7 +20,7 @@ exports.getAllFreelance = (_, res) => {
   Freelance.find().then((freelance) => {
     if (!freelance) {
       return res.status(404).send({
-        message: "no freelance found",
+        message: "Aucun freelance trouvé",
       });
     } else {
       res.send(freelance);
