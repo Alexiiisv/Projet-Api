@@ -70,76 +70,71 @@ exports.addJobToMission = (req, res) => {
 
 exports.proposeToFreelance = async (req, res) => {
   const { missionID, freelanceID } = req.body;
-  var body = {
-    message: "Réussite de la proposition pour un freelance"
-  };
-  var returnID = 200;
 
   //#region check que les valeurs existe
   await Mission.findById(missionID).then((mission) => {
     if(!mission) {
-      body = {
+      return res.status(404).send({
         message: "no mission found",
-      };
-      returnID = 404;
+      });
     }
   })
   await User.findById(req.userToken.id).then((business) => {
     if(!business) {
-      body = {
+      return res.status(404).send({
         message: "no business found",
-      };
-      returnID = 404;
+      });
     }
   })
   await User.findById(freelanceID).then((freelance) => {
     if(!freelance) {
-      body = {
+      return res.status(404).send({
         message: "no freelance found",
-      };
-      returnID = 404;
+      });
     } else {
       if(!freelance.isFreelance) {
-        body = {
+        return res.status(201).send({
           message: "Cet utilisateur n'est pas un freelance.",
-        };
+        });
       }
     }
     
   })
-  //TO FIXE
+  await Assoc_Freelance_Mission.find({missionID: missionID, status: "Accepted"}).then((assoc) => {
+    if (assoc.length == 3) {
+      return res.status(201).send({
+        message: "Cet mission à déjà 3 freelances acceptés.",
+      });
+    }
+   
+  });
   await Assoc_Freelance_Mission.find({freelanceID: freelanceID, missionID: missionID}).then((assoc) => {
-    // console.log(typeof [], typeof assoc)
-    console.log(assoc)
-    console.log(assoc == [])
-    if (assoc != []) {
-      console.log("ntm")
-      body = {
-        message: "Cet utilisateur à déjà accepté cette mission.",
-      };
-      returnID = 201;
+    if (assoc.length > 0) {
+      return res.status(201).send({
+        message: "Cet utilisateur à déjà été proposé pour cette mission.",
+      });
     }
    
   });
   //#endregion
 
   //#region insert dans les associations les ID
-  if(missionID == 200) {
-    const newAssoc_Business_Mission = Assoc_Business_Mission({
-      businessID: req.userToken.id,
-      missionID
-    })
-    const newAssoc_Freelance_Mission = Assoc_Freelance_Mission({
-      freelanceID,
-      missionID,
-      status: 'Waiting'
-    })
-    newAssoc_Business_Mission.save();
-    newAssoc_Freelance_Mission.save();
-  }
-  
+  const newAssoc_Business_Mission = Assoc_Business_Mission({
+    businessID: req.userToken.id,
+    missionID
+  })
+  const newAssoc_Freelance_Mission = Assoc_Freelance_Mission({
+    freelanceID,
+    missionID,
+    status: 'Waiting'
+  })
+  newAssoc_Business_Mission.save();
+  newAssoc_Freelance_Mission.save();
+
   //#endregion
 
-  return res.status(returnID).send(body);
+  return res.status(200).send({
+    message: "Réussite de la proposition pour un freelance"
+  });
 };
 

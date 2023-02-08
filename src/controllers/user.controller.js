@@ -142,17 +142,20 @@ exports.setBusiness = (req, res) => {
 };
 
 exports.getAllMissionByUserID = (req, res) => {
-  Mission.find({freelances: req.body.UserID}).then((mission) => { //{freelances: req.body.UserID}
-    console.log(mission);
-  });
-
-  res.send({
-    message: "test"
+  Mission.find({freelances: req.body.UserID}).then((mission) => {
+    if (!mission) {
+      res.send({
+        message: "l'utilisateur n'as pas de mission proposé"
+      });
+    }
+    res.send({
+      missions: mission
+    })
   });
 }
 
 exports.getAllPendingMissionByUserID = async (req, res) => {
-  await Assoc_Freelance_Mission.find({status: 'waiting', freelanceID: req.userToken.id}).then((mission) => {
+  await Assoc_Freelance_Mission.find({status: 'Waiting', freelanceID: req.userToken.id}).then((mission) => {
     if (!mission) {
       res.send({
         message: 'Cet utilisateur n\'as aucune mission en attente.'

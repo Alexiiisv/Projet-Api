@@ -24,4 +24,6 @@ router.get("/getAllPendingMissionByUserID", verifyToken, userController.getAllPe
 
 router.post("/acceptMission", [verifyToken, verifyFreelanceMission], userController.acceptMission);
 
+router.post("/declineMission", [verifyToken, verifyFreelanceMission], userController.declineMission);
+
 module.exports = router;
