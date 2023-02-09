@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const assoc_Business_MissionSchema = mongoose.Schema(
   {
-    businessID: { type: mongoose.Schema.Types.ObjectId, ref: "business" },
+    businessID: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     missionID: { type: mongoose.Schema.Types.ObjectId, ref: "mission" },
   },
   {

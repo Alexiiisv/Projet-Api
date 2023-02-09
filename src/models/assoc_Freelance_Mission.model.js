@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const assoc_Freelance_MissionSchema = mongoose.Schema(
   {
-    freelanceID: { type: mongoose.Schema.Types.ObjectId, ref: "freelance" },
+    freelanceID: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     missionID: { type: mongoose.Schema.Types.ObjectId, ref: "mission" },
     status: { type: mongoose.Schema.Types.String},
   },

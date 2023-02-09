@@ -24,6 +24,43 @@ exports.create = (req, res) => {
     });
 };
 
+exports.delete = (req, res) => {
+  Mission.findByIdAndDelete(req.params.id).then(async (mission) => {
+    if(!mission) {
+      return res.status(400).send({
+        message: "Cette mission n'existe pas."
+      })
+    }
+    await Assoc_Business_Mission.find({businessID: req.userToken.id, missionID: mission}).then((assoc) => {
+      if (assoc.length <= 0) {
+        return res.status(201).send({
+          message: "Cet utilisateur n'est pas le créateur de la mission, il ne peut pas la supprimer.",
+        });
+      }
+    });
+    Assoc_Freelance_Mission.find({missionID: mission}).remove();
+    res.send(mission);
+  });
+};
+
+exports.update = (req, res) => {
+  Mission.findByIdAndUpdate(req.params.id, {totalPrice: req.body.totalPrice, description: req.body.description, title: req.body.title, startDate: req.body.startDate, endDate: req.body.endDate}).then(async (mission) => {
+    if (!mission) {
+      res.status(400).send({
+        message: "Cette mission n'existe pas."
+      })
+    }
+    await Assoc_Business_Mission.find({businessID: req.userToken.id, missionID: mission}).then((assoc) => {
+      if (assoc.length <= 0) {
+        return res.status(201).send({
+          message: "Cet utilisateur n'est pas le créateur de la mission, il ne peut pas la supprimer.",
+        });
+      }
+    });
+    res.send(mission);
+  })
+}
+
 exports.addhardSkillToMission = (req, res) => {
   const { missionID, hardSkillID } = req.body;
   Mission.findById(missionID).then((mission) => {

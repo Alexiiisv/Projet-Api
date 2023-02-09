@@ -155,7 +155,7 @@ exports.getAllMissionByUserID = (req, res) => {
 }
 
 exports.getAllPendingMissionByUserID = async (req, res) => {
-  await Assoc_Freelance_Mission.find({status: 'Waiting', freelanceID: req.userToken.id}).then((mission) => {
+  await Assoc_Freelance_Mission.find({status: 'Waiting', freelanceID: req.params.id}).then((mission) => {
     if (!mission) {
       res.send({
         message: 'Cet utilisateur n\'as aucune mission en attente.'
@@ -176,29 +176,39 @@ exports.acceptMission = async (req, res) => {
       });
     }
     if (assoc.status == "Accepted") {
-      return res.send({
+      return res.status(400).send({
         message: "Utilisateur à déjà accepter cette mission."
       });
     }
 
     
     //#region Mail
-    
-    // Business.find
 
-    let user = `"${firstName.concat(" ", lastName)}" <${email}>`;
-    let admin = "admin@projapi.com";
-    let businessContent = `${firstName.concat(
-      " ",
-      lastName
-    )} vient d'accepter la proposition de mission ID: ${req.body.MissionID}.`;
-    let userContent = `Vous venez d'accepter la proposition pour une mission ID: ${req.body.MissionID}.`;
+    var email;
+    await User.findById(assoc.freelanceID).then((user) => {
+      email = user.email;
+    })
+    
+    
+    //  Assoc_Business_Mission.find({missionID: missionID}).then(async (assocBusiness) => {
+    // Dans mes tests, le businessID est a undefined alors que quand je log assocBusiness il a une valeur
+    // de ce fait je vais mettre l'email pour les business par celle de l'admin (pas le choix)
+    
+    // console.log(assocBusiness)
+    // console.log(assocBusiness.businessID)
+    // await User.findById(assocBusiness.businessID).then((user) => {
+    // email = user.email;
+    // })
+    // })
+    let user = email;
+    let business = "admin@projapi.com";
+    let businessContent = `Cette mission ID: ${missionID} vient d'être acceptée.`;
+    let userContent = `Vous venez d'accepter la proposition pour une mission ID: ${missionID}.`;
     let subject = "Acceptation d'une mission";
     console.log("\nEmail Admin");
-    await Email(user, admin, businessContent, subject);
+    await Email(user, business, businessContent, subject);
     console.log("\nEmail User");
-    await Email(admin, user, userContent, subject);
-    res.send({ msg: "Compte créer", user: data });
+    await Email(business, user, userContent, subject);
 
     //#endregion
     
@@ -207,7 +217,7 @@ exports.acceptMission = async (req, res) => {
       mission: mission
     })
   })
-  res.send({
+  return res.send({
     message: 'L\'utilisateur vient d\'accepter la mission'
   })
 }
@@ -224,33 +234,85 @@ exports.declineMission = async (req, res) => {
         message: "Utilisateur à déjà refusé cette mission."
       });
     }
-    
-    //#region Mail
-    
-    // Business.find
 
-    let user = `"${firstName.concat(" ", lastName)}" <${email}>`;
-    let admin = "admin@projapi.com";
-    let businessContent = `${firstName.concat(
-      " ",
-      lastName
-    )} vient d'accepter la proposition de mission ID: ${req.body.MissionID}.`;
-    let userContent = `Vous venez d'accepter la proposition pour une mission ID: ${req.body.MissionID}.`;
+    //#region Mail
+    // Même problème que pour accepter la mission, je ne peux pas récupérer l'email de l'entreprise.
+    // Je met donc l'email de l'Admin à la place.
+    
+    var email;
+    await User.findById(assoc.freelanceID).then((user) => {
+      email = user.email;
+    })
+
+    let user = email;
+    let business = "admin@projapi.com";
+    let businessContent = `Cette mission ID: ${req.body.MissionID} vient d'être refusé.`;
+    let userContent = `Vous venez de décliner la proposition pour une mission ID: ${req.body.MissionID}.`;
     let subject = "Refus d'une mission";
     console.log("\nEmail Admin");
-    await Email(user, admin, businessContent, subject);
+    await Email(user, business, businessContent, subject);
     console.log("\nEmail User");
-    await Email(admin, user, userContent, subject);
-    res.send({ msg: "Compte créer", user: data });
+    await Email(business, user, userContent, subject);
 
     //#endregion
 
     return res.send({
-      association: assoc,
-      mission: mission
+      association: assoc
     })
   })
-  res.send({
-    message: 'test'
-  })
 }
+
+exports.searchFreelance = (req, res) => {
+  const {firstName, lastName, city} = req.body;
+  User.find({$and: [{$or: [{ firstName }, { lastName }, { city }]}, {isFreelance: { $eq: true}}]}).then((users) => {
+    if (!users) {
+      return res.status(404).send({
+        message: "Aucun utilisateur trouvé"
+      });
+    }
+    res.send(users)
+  })
+};
+
+exports.changePassword = async (req, res) => {
+  var password = bcrypt.hashSync(req.body.password, saltRounds);
+  User.findByIdAndUpdate(req.params.id, password).then((user) => {
+    if (!user) {
+      return res.status(404).send({
+        message: "user not found",
+      });
+    }
+    bcrypt.compare(req.body.oldpassword, user.password).then((valid) => {
+      if (!valid) {
+        return res.status(401).send({
+          message: "wrong password",
+        });
+      }
+    })
+    res.send({
+      message: "Le mot de passe vient d'être changé."
+    })
+  })
+};
+
+exports.resetPassword = (req, res) => {
+  var newPassword = Math.random().toString(42).substring(1, 14);
+  var password = bcrypt.hashSync(newPassword, saltRounds);
+  User.findByIdAndUpdate(req.params.id, {password}).then((user) => {
+      if (!user) {
+        return res.status(404).send({
+          message: "user not found",
+        });
+      }
+      //#region Email
+      let userMail = `"${user.firstName.concat(" ", user.lastName)}" <${user.email}>`;
+      let admin = "admin@projapi.com";
+      let userContent = `Voici le nouveau mot de passe de votre compte: ${newPassword}`;
+      let subject = "Nouveau mot de passe";
+      Email(admin, userMail, userContent, subject);
+      //#endregion
+    })
+    res.send({
+      message: "Mot de passe modifié."
+    })
+};
